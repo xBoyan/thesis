@@ -1,0 +1,11 @@
+# folders
+venv
+.idea
+dataset/*
+
+
+# files
+*.pyc
+*.log
+
+#!dataset/products.csv
