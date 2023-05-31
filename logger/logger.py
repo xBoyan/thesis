@@ -1,9 +1,13 @@
 import os
 from loguru import logger
 
-LOGS_PATH = "C:\\Users\\Adam\\thesis\\logs\\test.log"
+LOGS_PATH = "D:\\Github\\thesis\\logs\\test.log"
 
-os.remove(LOGS_PATH)
+try:
+    os.remove(LOGS_PATH)
+except FileNotFoundError:
+    pass
+
 logger.add(LOGS_PATH, level="TRACE")
 
 

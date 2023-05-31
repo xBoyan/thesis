@@ -5,13 +5,15 @@ from logger import logger
 from utils.utils import get_checksum
 
 
-DATASET_PATH = "C:\\Users\\Adam\\thesis\\dataset"
+DATASET_PATH = "D:\\Github\\thesis\\dataset"
 
 
 class SneakerModel:
-    def __init__(self, model, sku):
+    def __init__(self, model, sku, additional_info=None):
         self.model = model
         self.sku = sku
+
+        self.info = additional_info
 
         logger.debug(f"Initializing sneaker model for {self}")
 

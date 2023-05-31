@@ -8,8 +8,8 @@ from .sneaker_model import SneakerModel
 
 
 class DBScrapper(Scraper):
-    def __init__(self, csv_file_path, force_skip=False):
-        super().__init__(force_skip=force_skip)
+    def __init__(self, csv_file_path, force_skip=False, workers=1):
+        super().__init__(force_skip=force_skip, workers=workers)
 
         self.items = read_csv(path=csv_file_path)
 
@@ -19,39 +19,33 @@ class DBScrapper(Scraper):
     def __str__(self):
         return self.__repr__()
 
-    def _scrap_item(self, item):
+    def _scrap_item(self, model):
         """
         Scraps one item from database, downloads its picture(s) into correct folder in dataset
-        :param item: single item record from database
-        :type item: dict
+        :param model: scraped sneaker model
+        :type model: SneakerModel
         :return: scraped sneaker model
         :rtype: SneakerModel
         """
-        model = self._get_sneaker_model(item=item)
-
-        images = self._get_images(item=item)
+        images = self._get_images(item=model.info)
 
         if not self._force_skip or len(images) != len(model.images):
             self._download_images(model=model, images=images)
 
         return model
 
-    def _get_sneaker_model(self, item):
+    def _get_model(self, item):
         """
         Creates SneakerModel object based on given database record
         :param item: single item record from database
         :type item: dict
         :return: scraped sneaker model
         :rtype: SneakerModel
-        :raises ScrapUnsuccessful: when model is not supported
         """
-        try:
-            model = self._get_model(product_name=item["shoes_name"])
-            sku = self._get_sku(sku=item["shoes_sku"])
-        except InvalidItem:
-            raise ScrapUnsuccessful(msg="Model not supported", log_to_console=False)
+        model = self._get_sneaker_model(product_name=item["shoes_name"])
+        sku = self._get_sku(sku=item["shoes_sku"])
 
-        return SneakerModel(model=model, sku=sku)
+        return SneakerModel(model=model, sku=sku, additional_info=item)
 
     @staticmethod
     def _get_images(item):
